@@ -28,13 +28,19 @@ async function run() {
 
 
         const lectureCollection = client.db('languageSchool').collection('lactures');
+        const instructorCollection = client.db('languageSchool').collection('instructors');
 
 
         app.get('/lactures', async(req, res) => {
             const result = await lectureCollection.find().toArray();
             res.send(result);
         })
+        
 
+        app.get('/instructors', async(req, res) => {
+            const result = await instructorCollection.find().toArray();
+            res.send(result);
+        })
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
