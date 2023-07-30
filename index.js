@@ -45,6 +45,17 @@ async function run() {
         })
 
         // select collection
+        app.get('/selectItems', async(req, res) => {
+            const email = req.query.email;
+            if(!email){
+                res.send([]);
+            }
+            const query = { email: email };
+            const result = await selectCollection.find(query).toArray();
+            res.send(result);
+        });
+        
+
         app.post('/selectItems', async(req, res) => {
             const PClass = req.body;
             console.log(PClass);
