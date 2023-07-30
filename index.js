@@ -30,6 +30,8 @@ async function run() {
         const lectureCollection = client.db('languageSchool').collection('lactures');
         const instructorCollection = client.db('languageSchool').collection('instructors');
 
+        const selectCollection = client.db('languageSchool').collection('selectItems');
+
 
         app.get('/lactures', async(req, res) => {
             const result = await lectureCollection.find().toArray();
@@ -41,6 +43,15 @@ async function run() {
             const result = await instructorCollection.find().toArray();
             res.send(result);
         })
+
+        // select collection
+        app.post('/selectItems', async(req, res) => {
+            const PClass = req.body;
+            console.log(PClass);
+            const result = await selectCollection.insertOne(PClass);
+            res.send(result);
+        })
+
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
