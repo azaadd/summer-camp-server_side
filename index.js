@@ -73,6 +73,13 @@ async function run() {
 
         app.post('/selectItems', async(req, res) => {
             const selectItem = req.body;
+
+            const query = {name: selectItem.name}
+            const existingUser = await selectCollection.findOne(query);
+            if(existingUser){
+                return res.send({message: 'You have already selected this class'})
+            }
+
             console.log(selectItem);
             const result = await selectCollection.insertOne(selectItem);
             res.send(result);
