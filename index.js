@@ -32,6 +32,15 @@ async function run() {
 
         const selectCollection = client.db('languageSchool').collection('selectItems');
 
+        const usersCollection = client.db('languageSchool').collection('usersInfo');
+
+        // users api
+        app.post('/usersInfo', async(req, res) => {
+            const user = req.body;
+            const result = await usersCollection.insertOne(user);
+            res.send(result);
+        })
+
 
         app.get('/lactures', async(req, res) => {
             const result = await lectureCollection.find().toArray();
@@ -46,20 +55,19 @@ async function run() {
 
         // select collection
         app.get('/selectItems', async(req, res) => {
-            const email = req.query.email;
-            if(!email){
-                res.send([]);
+            let query = {};
+            if (req.query?.email) {
+                query = { email: req.query.email}
             }
-            const query = { email: email };
             const result = await selectCollection.find(query).toArray();
             res.send(result);
         });
 
 
         app.post('/selectItems', async(req, res) => {
-            const PClass = req.body;
-            console.log(PClass);
-            const result = await selectCollection.insertOne(PClass);
+            const selectItem = req.body;
+            console.log(selectItem);
+            const result = await selectCollection.insertOne(selectItem);
             res.send(result);
         })
 
