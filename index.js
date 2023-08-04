@@ -35,6 +35,12 @@ async function run() {
         const usersCollection = client.db('languageSchool').collection('usersInfo');
 
         // users api
+        app.get('/usersInfo', async(req, res) => {
+            const result = await usersCollection.find().toArray();
+            res.send(result);
+        })
+
+
         app.post('/usersInfo', async(req, res) => {
             const user = req.body;
 
