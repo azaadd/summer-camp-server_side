@@ -61,8 +61,22 @@ async function run() {
             res.send({ token });
         })
 
+        const verifyAdmin = async (req, res, next) => {
+            const email = req.decoded.email;
+            const query = { email: email};
+            const user = await usersCollection.findOne(query);
+            if(user?.role !== 'admin') {
+                return res.status(403).send({ error: true, message: 'forbidden access' })
+            }
+            next();
+        }
+
+        /***
+         * 
+         ***/
+
         // users api
-        app.get('/usersInfo', async (req, res) => {
+        app.get('/usersInfo', verifyJWT, verifyAdmin, async (req, res) => {
             const result = await usersCollection.find().toArray();
             res.send(result);
         })
@@ -115,6 +129,12 @@ async function run() {
             res.send(result);
         })
 
+        app.post('/lactures', verifyJWT, verifyAdmin, async(req, res) => {
+            const newItem = req.body;
+            const result = await lectureCollection.insertOne(newItem);
+            res.send(result);
+        })
+
 
         app.get('/instructors', async (req, res) => {
             const result = await instructorCollection.find().toArray();
@@ -143,13 +163,11 @@ async function run() {
 
         app.post('/selectItems', async (req, res) => {
             const selectItem = req.body;
-
-            const query = { name: selectItem.name }
-            const existingUser = await selectCollection.findOne(query);
-            if (existingUser) {
-                return res.send({ message: 'You have already selected this class' })
-            }
-
+            // const query = { name: selectItem.name }
+            // const existingUser = await selectCollection.findOne(query);
+            // if (existingUser) {
+            //     return res.send({ message: 'You have already selected this class' })
+            // }
             console.log(selectItem);
             const result = await selectCollection.insertOne(selectItem);
             res.send(result);
@@ -159,6 +177,12 @@ async function run() {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
             const result = await selectCollection.deleteOne(query);
+            res.send(result);
+        })
+        app.delete('/lactures/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await lectureCollection.deleteOne(query);
             res.send(result);
         })
 
