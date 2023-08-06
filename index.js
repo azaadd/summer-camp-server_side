@@ -179,10 +179,18 @@ async function run() {
             const result = await selectCollection.deleteOne(query);
             res.send(result);
         })
+
         app.delete('/lactures/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
             const result = await lectureCollection.deleteOne(query);
+            res.send(result);
+        })
+
+        app.delete('/usersInfo/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await usersCollection.deleteOne(query);
             res.send(result);
         })
 
