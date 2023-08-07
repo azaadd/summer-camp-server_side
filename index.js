@@ -55,6 +55,8 @@ async function run() {
 
         const usersCollection = client.db('languageSchool').collection('usersInfo');
 
+        const paymentCollection = client.db('languageSchool').collection('paymentInfo');
+
 
         app.post('/jwt', (req, res) => {
             const user = req.body;
@@ -196,7 +198,7 @@ async function run() {
         })
 
         // create payment intent
-        app.post('/create-payment-intent', async(req, res) => {
+        app.post('/create-payment-intent', verifyJWT, async(req, res) => {
             const {price} = req.body;
             const amount = price*100;
             const paymentIntent = await stripe.paymentIntents.create({
@@ -207,6 +209,18 @@ async function run() {
             res.send({
                 clientSecret: paymentIntent.client_secret,
             })
+        })
+
+        //payment related api
+        app.post('/paymentInfo', verifyJWT, async(req, res) => {
+            const payment = req.body;
+            const insertResult = await paymentCollection.insertOne(payment);
+
+            const query = {_id: {$in: payment.cartItems.map(id => new ObjectId(id))}}
+            const deleteResult = await selectCollection.deleteMany(query);
+
+
+            res.send({insertResult, deleteResult});
         })
 
 
